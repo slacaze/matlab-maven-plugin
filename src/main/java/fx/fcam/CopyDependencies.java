@@ -23,7 +23,7 @@ public class CopyDependencies extends AbstractMojo {
     @Component
     private BuildPluginManager pluginManager;
 
-    @Parameter(property = "project.build.directory", readonly = true)
+    @Parameter(property = "dependenciesDirectory", readonly = true)
     private String dependenciesDirectory;
 
     public void execute() throws MojoExecutionException {
