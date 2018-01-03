@@ -46,8 +46,17 @@ public class Matlab {
             MavenLog.debug(line);
         }
         MavenLog.debug("=======================================================================");
-        runMatlab(matlabPath, matlabWrapper, preserveLog);
-        matlabFile.delete();
+        try{
+            runMatlab(matlabPath, matlabWrapper, preserveLog);
+        } catch (IOException exception) {
+            throw exception;
+        } catch (InterruptedException exception) {
+            throw exception;
+        } catch (MatlabException exception) {
+            throw exception;
+        } finally {
+            matlabFile.delete();
+        }
     }
 
     private File createMatlabFile(String fileContent) throws IOException {
@@ -73,7 +82,7 @@ public class Matlab {
         try{
             Process process = processBuilder.start();
             int errCode = process.waitFor();
-            showProcessOutput(errCode, preserveLog);
+            showProcessOutput(errCode);
         } catch (IOException exception) {
             showStackTrace(exception);
             throw exception;
@@ -84,6 +93,9 @@ public class Matlab {
             throw exception;
         } finally {
             try{
+                if(!preserveLog) {
+                    (new File(LogFilePath)).delete();
+                }
                 FileUtils.deleteDirectory(preferenceFolder);
             } catch (IOException exception) {
                 showStackTrace(exception);
@@ -92,7 +104,7 @@ public class Matlab {
         }
     }
 
-    private void showProcessOutput(int errCode, boolean preserveLog) throws IOException, MatlabException {
+    private void showProcessOutput(int errCode) throws IOException, MatlabException {
         if(errCode != 0) {
             List<String> lines = Files.readAllLines(Paths.get(ErrorFilePath), DefaultCharset);
             MavenLog.debug("=======================================================================");
@@ -102,9 +114,6 @@ public class Matlab {
             }
             (new File(ErrorFilePath)).delete();
             throw new MatlabException(lines.get(0));
-        }
-        if(!preserveLog) {
-            (new File(LogFilePath)).delete();
         }
     }
 
