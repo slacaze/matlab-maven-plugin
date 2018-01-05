@@ -25,14 +25,14 @@ public class FixPackageFolder extends AbstractMojo {
         if( rootFolder.toFile().exists() ) {
             addAPlusToFolderName(rootFolder.toFile());
         }else{
-            getLog().info("Could not find " + rootFolder.toString() + "; skipping.");
+            getLog().debug("Could not find " + rootFolder.toString() + "; skipping.");
         }
         getLog().info("Fixing test folder");
         Path testFolder = Paths.get(baseDir.getAbsolutePath(),"test");
         if( testFolder.toFile().exists() ) {
             addAPlusToFolderName(testFolder.toFile());
         }else{
-            getLog().info("Could not find " + testFolder.toString() + "; skipping.");
+            getLog().debug("Could not find " + testFolder.toString() + "; skipping.");
         }
     }
 
@@ -41,11 +41,11 @@ public class FixPackageFolder extends AbstractMojo {
         if( subDirectories != null ) {
             for (File entry : subDirectories) {
                 if (entry.isDirectory()) {
-                    getLog().info("Passing " + entry.getAbsolutePath());
+                    getLog().debug("Passing " + entry.getAbsolutePath());
                     String directoryName = entry.getName();
                     if (!directoryName.startsWith("+")) {
                         File newFile = Paths.get(entry.getParentFile().getAbsolutePath(), "+" + directoryName).toFile();
-                        getLog().info("    Renaming to " + newFile.getAbsolutePath());
+                        getLog().debug("    Renaming to " + newFile.getAbsolutePath());
                         entry.renameTo(newFile);
                         entry = newFile;
                     }
