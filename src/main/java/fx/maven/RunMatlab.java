@@ -1,4 +1,4 @@
-package fx.fcam;
+package fx.maven;
 
 import java.lang.InterruptedException;
 
