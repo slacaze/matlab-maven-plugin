@@ -1,6 +1,0 @@
-fx\maven\FixPackageFolder.class
-fx\maven\Package.class
-fx\maven\MatlabException.class
-fx\maven\Matlab.class
-fx\maven\CopyDependencies.class
-fx\maven\RunMatlab.class
