@@ -13,7 +13,7 @@
                         <id>default</id>
                         <phases>
                             <process-resources>
-                                org.apache.maven.plugins:maven-dependency-plugin:copy-dependencies
+                                fx.maven:matlab-maven-plugin:copy-dependencies
                             </process-resources>
                             <test>
                                 org.apache.maven.plugins:maven-surefire-plugin:test

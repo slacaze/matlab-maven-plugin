@@ -23,7 +23,7 @@ public class CopyDependencies extends AbstractMojo {
     @Component
     private BuildPluginManager pluginManager;
 
-    @Parameter(property = "dependenciesDirectory", readonly = true)
+    @Parameter(property = "dependenciesDirectory", readonly = true, required = true, defaultValue="${project.basedir}/dependencies")
     private String dependenciesDirectory;
 
     public void execute() throws MojoExecutionException {
@@ -35,7 +35,8 @@ public class CopyDependencies extends AbstractMojo {
                 ),
             goal("copy-dependencies"),
             configuration(
-                element(name("outputDirectory"), dependenciesDirectory)
+                element(name("outputDirectory"), dependenciesDirectory),
+                element(name("useSubDirectoryPerScope"), "true")
                 ),
             executionEnvironment(
                 mavenProject,

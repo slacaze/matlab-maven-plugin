@@ -29,6 +29,7 @@ public class Matlab {
     private String ErrorFilePath = "maven_matlab.err";
     private String LogFilePath = "maven_matlab.log";
     private String PreferenceFolderPath = "MALTAB_PREFERENCES";
+    private String AddOnsFolderPath = "MATLAB_ADDONS";
 
     private Log MavenLog;
 
@@ -36,37 +37,39 @@ public class Matlab {
         MavenLog = mavenLog;
         File matlabFile = createMatlabFile(matlabCommand);
         String separator = "    fprintf(1,'%s\\n\\n',repmat('=',1,20));\n";
+        File addOnsFolder = new File(AddOnsFolderPath);
+        addOnsFolder.mkdir();
         String matlabWrapper = "try\n" +
                                separator +
-                               "    fprintf(1,'MATLAB Version: %s\\n\\n',version);\n" +
+                               "    fprintf( 1, 'MATLAB Version: %s\\n\\n', version );\n" +
                                separator +
-                               "    fprintf(1,'Prefdir:   %s\\n\\n',prefdir);\n" +
+                               "    fprintf( 1, 'Prefdir:   %s\\n\\n', prefdir );\n" +
                                "    s = settings;\n" +
                                separator +
-                               "    s.matlab.addons.InstallationFolder.TemporaryValue=fullfile(pwd,'MATLAB_AddOns');\n" +
-                               "    fprintf(1,'AddOn Dir: %s\\n\\n',s.matlab.addons.InstallationFolder.ActiveValue);\n" +
+                               "    s.matlab.addons.InstallationFolder.TemporaryValue = '" + addOnsFolder.getAbsolutePath() + "';\n" +
+                               "    fprintf( 1, 'AddOn Dir: %s\\n\\n', s.matlab.addons.InstallationFolder.ActiveValue );\n" +
                                separator +
-                               "    fprintf(1,'Restore default path\\n\\n');\n" +
+                               "    fprintf( 1, 'Restore default path\\n\\n' );\n" +
                                "    restoredefaultpath;\n" +
                                separator +
-                               "    fprintf(1,'Ver output:\\n\\n',version);\n" +
+                               "    fprintf( 1, 'Ver output:\\n\\n', version );\n" +
                                "    ver;\n" +
-                               "    fprintf(1,'\\n');\n" +
+                               "    fprintf( 1, '\\n' );\n" +
                                separator +
-                               "    fprintf(1,'Running:\\n\\n');\n" +
-                               "    type('" + matlabFile.getAbsolutePath() + "');\n" +
-                               "    fprintf(1,'\\n');\n" +
+                               "    fprintf( 1, 'Running:\\n\\n' );\n" +
+                               "    type( '" + matlabFile.getAbsolutePath() + "' );\n" +
+                               "    fprintf( 1, '\\n' );\n" +
                                separator +
-                               "    fprintf(1,'Output:\\n\\n');\n" +
-                               "    run('" + matlabFile.getAbsolutePath() + "');\n" +
-                               "    exit(0);\n" +
+                               "    fprintf( 1, 'Output:\\n\\n' );\n" +
+                               "    run( '" + matlabFile.getAbsolutePath() + "' );\n" +
+                               "    exit( 0 );\n" +
                                "catch matlabException\n" +
-                               "    file=fopen('" + ErrorFilePath + "','w');\n" +
-                               "    fprintf(file,'%s',matlabException.getReport('extended','hyperlinks','off'));\n" +
+                               "    file = fopen( '" + ErrorFilePath + "', 'w' );\n" +
+                               "    fprintf( file, '%s', matlabException.getReport( 'extended', 'hyperlinks', 'off' ) );\n" +
                                separator +
-                               "    fprintf(2,'%s',matlabException.getReport('extended','hyperlinks','off'));\n" +
-                               "    fclose(file);\n" +
-                               "    exit(1);\n" +
+                               "    fprintf( 2, '%s', matlabException.getReport( 'extended', 'hyperlinks', 'off' ) );\n" +
+                               "    fclose( file );\n" +
+                               "    exit( 1 );\n" +
                                "end\n";
         String[] matlabLines = matlabWrapper.split("\n");
         MavenLog.debug("=======================================================================");
@@ -77,6 +80,7 @@ public class Matlab {
         MavenLog.debug("=======================================================================");
         try{
             runMatlab(matlabPath, matlabWrapper, preserveLog);
+            FileUtils.deleteDirectory(addOnsFolder);
         } catch (IOException exception) {
             throw exception;
         } catch (InterruptedException exception) {
