@@ -33,6 +33,18 @@ public class Matlab {
 
     private Log MavenLog;
 
+    protected String addDependencies(String dependenciesDirectory, String scope){
+        String matlabCommands = "dependenciesPath = fullfile( '" + dependenciesDirectory + "', '" + scope + "' );\n" +
+                                "fprintf( 1, 'Looking for dependencies in \"%s\"\\n', dependenciesPath )\n" +
+                                "dependencies = dir( fullfile( dependenciesPath, '*.mltbx' ) );\n" +
+                                "for dependencyIndex = 1:numel( dependencies )\n" +
+                                "    thisDependency = dependencies(dependencyIndex);\n" +
+                                "    fprintf( 1, 'Installing \"%s\"\\n', thisDependency.name )\n" +
+                                "    matlab.addons.toolbox.installToolbox( fullfile( thisDependency.folder, thisDependency.name ) );\n" +
+                                "end\n";
+        return matlabCommands;
+    }
+
     protected void runMatlabCommand(String matlabPath, String matlabCommand, boolean preserveLog, Log mavenLog) throws IOException, InterruptedException, MatlabException {
         MavenLog = mavenLog;
         File matlabFile = createMatlabFile(matlabCommand);

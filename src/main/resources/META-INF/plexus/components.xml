@@ -16,7 +16,7 @@
                                 fx.maven:matlab-maven-plugin:copy-dependencies
                             </process-resources>
                             <test>
-                                org.apache.maven.plugins:maven-surefire-plugin:test
+                                fx.maven:matlab-maven-plugin:test
                             </test>
                             <package>
                                 fx.maven:matlab-maven-plugin:package

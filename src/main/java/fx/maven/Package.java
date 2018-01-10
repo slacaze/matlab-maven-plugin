@@ -15,6 +15,8 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
+import org.apache.commons.io.FileUtils;
+
 @Mojo(name = "package")
 public class Package extends AbstractMojo {
 
@@ -42,16 +44,9 @@ public class Package extends AbstractMojo {
     private Matlab Matlab = new Matlab();
 
     public void execute() throws MojoExecutionException, MojoFailureException {
-        getLog().debug("Trying to package: " + artifactId);
-        String finalFilePath = outputDirectory +"/"+ finalName + ".mltbx";
-        String matlabCommand = "compileDependenciesPath = fullfile( '" + dependenciesDirectory + "', 'compile' );\n" +
-                               "fprintf( 1, 'Looking for dependencies in \"%s\"\\n', compileDependenciesPath )\n" +
-                               "compileDependencies = dir( fullfile( compileDependenciesPath, '*.mltbx' ) );\n" +
-                               "for dependencyIndex = 1:numel( compileDependencies )\n" +
-                               "    thisDependency = compileDependencies(dependencyIndex);\n" +
-                               "    fprintf( 1, 'Installing \"%s\"\\n', thisDependency.name )\n" +
-                               "    matlab.addons.toolbox.installToolbox( fullfile( thisDependency.folder, thisDependency.name ) );\n" +
-                               "end\n" +
+        getLog().debug("Packaging: " + artifactId);
+        String finalFilePath = (Paths.get(outputDirectory,finalName + ".mltbx")).toString();
+        String matlabCommand = Matlab.addDependencies(dependenciesDirectory, "compile") +
                                "mtlbxFile = '" + finalFilePath + "';\n" +
                                "if( ~isempty( which( 'fx.maven.command.addsandbox' ) ) )\n" +
                                "    fprintf( 1, 'Found MATLAB Maven Toolbox\\n' )\n" +
@@ -68,6 +63,7 @@ public class Package extends AbstractMojo {
             // Make sure target exists
             Files.createDirectories(Paths.get(outputDirectory));
             Matlab.runMatlabCommand(matlabPath, matlabCommand, preserveLog, getLog());
+            copyRuntimeDependencies();
         } catch(IOException exception) {
             throw new MojoExecutionException("An IO error occured: " + exception.getMessage());
         } catch(InterruptedException exception) {
@@ -77,4 +73,16 @@ public class Package extends AbstractMojo {
         }
         this.project.getArtifact().setFile(new File(finalFilePath));
     }
+
+    private void copyRuntimeDependencies() throws IOException {
+        File runtimeDependencyFolder = new File((Paths.get(dependenciesDirectory,"runtime")).toString());
+        File outputFolder = new File((Paths.get(outputDirectory,"for_redistribution")).toString());
+        File mltbxFile = new File((Paths.get(outputDirectory,finalName + ".mltbx")).toString());
+        File redistMltbxFile = new File((Paths.get(outputFolder.getAbsolutePath(),finalName + ".mltbx")).toString());
+        FileUtils.copyFile(mltbxFile,redistMltbxFile);
+        if( runtimeDependencyFolder.exists() ) {
+            FileUtils.copyDirectory(runtimeDependencyFolder,outputFolder);
+        }
+    }
+
 }
