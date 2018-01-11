@@ -165,32 +165,34 @@ public class Test extends AbstractMojo {
     }
 
     private int[] parseTestResultFile(String filePath, String testType) throws MojoExecutionException, MojoFailureException, IOException  {
-        File resultsFile = new File(filePath);
-        FileReader reader = new FileReader(resultsFile);
-        List<TestResult> results = new CsvToBeanBuilder<TestResult>(reader)
-                                   .withSeparator(Delimiter)
-                                   .withType(TestResult.class)
-                                   .build().parse();
         int numberOfPassed = 0;
         int numberOfFailed = 0;
         int numberOfIncomplete = 0;
-        getLog().debug(testType + " Test Details:");
-        for(TestResult result : results) {
-            getLog().debug(result.Name);
-            if( result.Passed) {
-                getLog().debug("  Passed");
-                numberOfPassed += 1;
+        File resultsFile = new File(filePath);
+        if( resultsFile.exists() ) {
+            FileReader reader = new FileReader(resultsFile);
+            List<TestResult> results = new CsvToBeanBuilder<TestResult>(reader)
+                                       .withSeparator(Delimiter)
+                                       .withType(TestResult.class)
+                                       .build().parse();
+            getLog().debug(testType + " Test Details:");
+            for(TestResult result : results) {
+                getLog().debug(result.Name);
+                if( result.Passed) {
+                    getLog().debug("  Passed");
+                    numberOfPassed += 1;
+                }
+                if( result.Failed) {
+                    getLog().debug("  Failed");
+                    numberOfFailed += 1;
+                }
+                if( result.Incomplete) {
+                    getLog().debug("  Incomplete");
+                    numberOfIncomplete += 1;
+                }
             }
-            if( result.Failed) {
-                getLog().debug("  Failed");
-                numberOfFailed += 1;
-            }
-            if( result.Incomplete) {
-                getLog().debug("  Incomplete");
-                numberOfIncomplete += 1;
-            }
+            reader.close();
         }
-        reader.close();
         getLog().info(testType + " Test Results:");
         getLog().info("Passed:     " + Integer.toString(numberOfPassed));
         getLog().info("Failed:     " + Integer.toString(numberOfFailed));
