@@ -90,6 +90,7 @@ public class Test extends AbstractMojo {
                                "    end\n" +
                                "    if runAddOnTests\n" +
                                "        warning( 'Maven:NoMavenToolbox', 'Can''t run AddOn test without the MATLAB Maven Toolbox.' );\n" +
+                               "        runAddOnTests = false;\n" +
                                "    end\n" +
                                "end\n" +
                                "if runSandboxTests\n" +
