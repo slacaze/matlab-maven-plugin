@@ -8,7 +8,7 @@ This repository holds a Maven Plugin to manage MATLAB Toolboxes.
 <plugin>
     <groupId>fx.maven</groupId>
     <artifactId>matlab-maven-plugin</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0</version>
 </plugin>
 ```
 
