@@ -4,7 +4,7 @@ This repository holds a Maven Plugin to manage MATLAB Toolboxes.
 
 ## Coordinates
 
-```xml
+```maven-pom
 <plugin>
     <groupId>fx.maven</groupId>
     <artifactId>matlab-maven-plugin</artifactId>
