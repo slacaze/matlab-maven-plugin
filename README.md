@@ -5,11 +5,11 @@ This repository holds a Maven Plugin to manage MATLAB Toolboxes.
 ## Coordinates
 
 ```xml
-<dependency>
+<plugin>
     <groupId>fx.maven</groupId>
     <artifactId>matlab-maven-plugin</artifactId>
     <version>1.0-SNAPSHOT</version>
-</dependency>
+</plugin>
 ```
 
 ## Workflow
